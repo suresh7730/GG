@@ -31,24 +31,24 @@ var model = undefined;
 const customModelPath = 'http://192.168.1.104:1880/model.json';
 
 
-cocoSsd.load().then(function (baseModel) {
-  tf.loadGraphModel(customModelPath).then(function (customModel) {
-    // Combine the base model and your custom model
-    model = tf.model({inputs: baseModel.inputs, outputs: customModel.outputs});
-    // Use the combined model for prediction
-    // ...
-  });
-  demosSection.classList.remove('invisible');
-});
+// cocoSsd.load().then(function (baseModel) {
+//   tf.loadGraphModel(customModelPath).then(function (customModel) {
+//     // Combine the base model and your custom model
+//     model = tf.model({inputs: baseModel.inputs, outputs: customModel.outputs});
+//     // Use the combined model for prediction
+//     // ...
+//   });
+//   demosSection.classList.remove('invisible');
+// });
 
 // Before we can use COCO-SSD class we must wait for it to finish
 // loading. Machine Learning models can be large and take a moment to
 // get everything needed to run.
-// cocoSsd.load().then(function (loadedModel) {
-//   model = loadedModel;
-//   // Show demo section now model is ready to use.
-//   demosSection.classList.remove('invisible');
-// });
+cocoSsd.load().then(function (loadedModel) {
+  model = loadedModel;
+  // Show demo section now model is ready to use.
+  demosSection.classList.remove('invisible');
+});
 
 
 /********************************************************************
