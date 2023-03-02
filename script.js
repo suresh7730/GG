@@ -28,7 +28,7 @@ const demosSection = document.getElementById('demos');
 var model = undefined;
 
 // const customModelPath = 'http://192.168.1.35:1883/getmodel/model.json';
-const customModelPath = 'http://192.168.1.104:1880/model.json';
+// const customModelPath = 'http://192.168.1.104:1880/model.json';
 
 
 // cocoSsd.load().then(function (baseModel) {
