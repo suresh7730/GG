@@ -50,7 +50,14 @@ tf.loadGraphModel(customModelPath).then(function (customModel) {
     demosSection.classList.remove('invisible');
 });
 
+http://192.168.1.35:1883/getmodel/model.json
+const model = await tf.loadLayersModel('http://192.168.1.35:1883/getmodel/model.json');
 
+cocoSsd.load().then(function (loadedModel) {
+  model = loadedModel;
+  // Show demo section now model is ready to use.
+  demosSection.classList.remove('invisible');
+});
 /********************************************************************
 // Demo 1: Grab a bunch of images from the page and classify them
 // upon click.
