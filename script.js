@@ -1,143 +1,51 @@
-const demosSection = document.getElementById('demos');
-demosSection.classList.remove('invisible');
+let video = document.getElementById("video");
+let model;
 
-// var model = undefined;
+// declare the canvas variable and setting up the context 
 
-// // Before we can use COCO-SSD class we must wait for it to finish
-// // loading. Machine Learning models can be large and take a moment to
-// // get everything needed to run.
-// cocoSsd.load().then(function (loadedModel) {
-//   model = loadedModel;
-//   // Show demo section now model is ready to use.
-//   demosSection.classList.remove('invisible');
-// });
-const model;
-const customModelPath = 'http://192.168.1.104:1880/model.json';
-// // cocoSsd.load().then(function (baseModel) {
-//   tf.loadGraphModel(customModelPath).then(function (customModel) {
-//     // Combine the base model and your custom model
-// //     const model = tf.model({inputs: baseModel.inputs, outputs: customModel.outputs});
-//     model = customModel;
-//   });
-// // });
+let canvas = document.getElementById("canvas");
+let ctx = canvas.getContext("2d");
 
-// tf.loadGraphModel(customModelPath).then(function (customModel) {
-//     model = customModel;
-//     demosSection.classList.remove('invisible');
-// });
+const accessCamera = () => {
+  navigator.mediaDevices
+    .getUserMedia({
+      video: { width: 500, height: 400 },
+      audio: false,
+    })
+    .then((stream) => {
+      video.srcObject = stream;
+    });
+};
 
-// http://192.168.1.35:1883/getmodel/model.json
-// const model = await tf.loadLayersModel('http://192.168.1.35:1883/getmodel/model.json');
+const detectFaces = async () => {
+  const prediction = await model.estimateFaces(video, false);
 
-// cocoSsd.load().then(function (loadedModel) {
-//   model = loadedModel;
-//   // Show demo section now model is ready to use.
-//   demosSection.classList.remove('invisible');
-// });
+  // Using canvas to draw the video first
 
+  ctx.drawImage(video, 0, 0, 500, 400);
 
-async function load_model() {
-    model = await loadGraphModel('http://192.168.1.35:1883/getmodel/model.json');
-    return model;
-  }
-
-const model = load_model();
-
-/********************************************************************
-// Demo 2: Continuously grab image from webcam stream and classify it.
-// Note: You must access the demo on https for this to work:
-// https://tensorflow-js-image-classification.glitch.me/
-********************************************************************/
-
-const video = document.getElementById('webcam');
-const liveView = document.getElementById('liveView');
-
-// Check if webcam access is supported.
-function hasGetUserMedia() {
-  return !!(navigator.mediaDevices &&
-    navigator.mediaDevices.getUserMedia);
-}
-
-// Keep a reference of all the child elements we create
-// so we can remove them easilly on each render.
-var children = [];
-
-
-// If webcam supported, add event listener to button for when user
-// wants to activate it.
-if (hasGetUserMedia()) {
-  const enableWebcamButton = document.getElementById('webcamButton');
-  enableWebcamButton.addEventListener('click', enableCam);
-} else {
-  console.warn('getUserMedia() is not supported by your browser');
-}
-
-
-// Enable the live webcam view and start classification.
-function enableCam(event) {
-  if (!model) {
-    console.log('Wait! Model not loaded yet.')
-    return;
-  }
-  
-  // Hide the button.
-  event.target.classList.add('removed');  
-  
-  // getUsermedia parameters.
-  const constraints = {
-    video: true
-  };
-
-  // Activate the webcam stream.
-  navigator.mediaDevices.getUserMedia(constraints).then(function(stream) {
-    video.srcObject = stream;
-    video.addEventListener('loadeddata', predictWebcam);
-  });
-}
-
-
-// Prediction loop!
-function predictWebcam() {
-  // Now let's start classifying the stream.
-  model.detect(video).then(function (predictions) {
-    // Remove any highlighting we did previous frame.
-    for (let i = 0; i < children.length; i++) {
-      liveView.removeChild(children[i]);
-    }
-    children.splice(0);
+  prediction.forEach((predictions) => {
     
-    // Now lets loop through predictions and draw them to the live view if
-    // they have a high confidence score.
-    for (let n = 0; n < predictions.length; n++) {
-      // If we are over 66% sure we are sure we classified it right, draw it!
-      if (predictions[n].score > 0.66) {
-        const p = document.createElement('p');
-        p.innerText = predictions[n].class  + ' - with ' 
-            + Math.round(parseFloat(predictions[n].score) * 100) 
-            + '% confidence.';
-        // Draw in top left of bounding box outline.
-        p.style = 'left: ' + predictions[n].bbox[0] + 'px;' +
-            'top: ' + predictions[n].bbox[1] + 'px;' + 
-            'width: ' + (predictions[n].bbox[2] - 10) + 'px;';
-
-        // Draw the actual bounding box.
-        const highlighter = document.createElement('div');
-        highlighter.setAttribute('class', 'highlighter');
-        highlighter.style = 'left: ' + predictions[n].bbox[0] + 'px; top: '
-            + predictions[n].bbox[1] + 'px; width: ' 
-            + predictions[n].bbox[2] + 'px; height: '
-            + predictions[n].bbox[3] + 'px;';
-
-        liveView.appendChild(highlighter);
-        liveView.appendChild(p);
-        
-        // Store drawn objects in memory so we can delete them next time around.
-        children.push(highlighter);
-        children.push(p);
-      }
-    }
-    
-    // Call this function again to keep predicting when the browser is ready.
-    window.requestAnimationFrame(predictWebcam);
+    // Drawing rectangle that'll detect the face
+    ctx.beginPath();
+    ctx.lineWidth = "4";
+    ctx.strokeStyle = "yellow";
+    ctx.rect(
+      predictions.topLeft[0],
+      predictions.topLeft[1],
+      predictions.bottomRight[0] - predictions.topLeft[0],
+      predictions.bottomRight[1] - predictions.topLeft[1]
+    );
+    // The last two arguments denotes the width and height
+    // but since the blazeface models only returns the coordinates  
+    // so we have to subtract them in order to get the width and height
+    ctx.stroke();
   });
-}
+};
+
+accessCamera();
+video.addEventListener("loadeddata", async () => {
+  model = await blazeface.load();
+  // Calling the detectFaces every 40 millisecond
+  setInterval(detectFaces, 40);
+});
