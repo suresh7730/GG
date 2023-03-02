@@ -14,7 +14,7 @@
   async function load_model() {
     // It's possible to load the model locally or from a repo
     // You can choose whatever IP and PORT you want in the "http://127.0.0.1:8080/model.json" just set it before in your https server
-    //const model = await loadGraphModel("http://127.0.0.1:8080/model.json");
+    //const model = await loadGraphModel("http://192.168.1.35:1883/getmodel/model.json");
     const model = await loadGraphModel("https://raw.githubusercontent.com/hugozanini/TFJS-object-detection/master/models/kangaroo-detector/model.json");
     return model;
   }
@@ -32,6 +32,7 @@
 
   }
 
+  const modelPromise = load_model();
   
   // get page elements
   const video = document.querySelector("#video");
