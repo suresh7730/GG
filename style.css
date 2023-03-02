@@ -1,10 +1,4 @@
-  .size {
-    position: fixed;
-    top: 0;
-    left: 0;
-  }
 
-/* 
 body {
   font-family: helvetica, arial, sans-serif;
   margin: 2em;
@@ -84,4 +78,4 @@ header, footer {
 .classifyOnClick img {
   width: 100%;
 }
- */
+
