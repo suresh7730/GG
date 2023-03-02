@@ -35,15 +35,19 @@ var model = undefined;
 //   // Show demo section now model is ready to use.
 //   demosSection.classList.remove('invisible');
 // });
-
+const model;
 const customModelPath = 'http://192.168.1.104:1880/model.json';
-cocoSsd.load().then(function (baseModel) {
-  tf.loadGraphModel(customModelPath).then(function (customModel) {
-    // Combine the base model and your custom model
-    const model = tf.model({inputs: baseModel.inputs, outputs: customModel.outputs});
-    // Use the combined model for prediction
-    // ...
-  });
+// // cocoSsd.load().then(function (baseModel) {
+//   tf.loadGraphModel(customModelPath).then(function (customModel) {
+//     // Combine the base model and your custom model
+// //     const model = tf.model({inputs: baseModel.inputs, outputs: customModel.outputs});
+//     model = customModel;
+//   });
+// // });
+
+tf.loadGraphModel(customModelPath).then(function (customModel) {
+    model = customModel;
+    demosSection.classList.remove('invisible');
 });
 
 
