@@ -1,51 +1,97 @@
-let video = document.getElementById("video");
-let model;
+(function () {
+  if (
+    !"mediaDevices" in navigator ||
+    !"getUserMedia" in navigator.mediaDevices
+  ) {
+    alert("Camera API is not available in your browser");
+    return;
+  }
 
-// declare the canvas variable and setting up the context 
+  // get page elements
+  const video = document.querySelector("#video");
+  const btnPlay = document.querySelector("#btnPlay");
+  const btnPause = document.querySelector("#btnPause");
+  const btnScreenshot = document.querySelector("#btnScreenshot");
+  const btnChangeCamera = document.querySelector("#btnChangeCamera");
+  const screenshotsContainer = document.querySelector("#screenshots");
+  const canvas = document.querySelector("#canvas");
+  const devicesSelect = document.querySelector("#devicesSelect");
 
-let canvas = document.getElementById("canvas");
-let ctx = canvas.getContext("2d");
+  // video constraints
+  const constraints = {
+    video: {
+      width: {
+        min: 1280,
+        ideal: 1920,
+        max: 2560,
+      },
+      height: {
+        min: 720,
+        ideal: 1080,
+        max: 1440,
+      },
+    },
+  };
 
-const accessCamera = () => {
-  navigator.mediaDevices
-    .getUserMedia({
-      video: { width: 500, height: 400 },
-      audio: false,
-    })
-    .then((stream) => {
-      video.srcObject = stream;
-    });
-};
+  // use front face camera
+  let useFrontCamera = true;
 
-const detectFaces = async () => {
-  const prediction = await model.estimateFaces(video, false);
+  // current video stream
+  let videoStream;
 
-  // Using canvas to draw the video first
-
-  ctx.drawImage(video, 0, 0, 500, 400);
-
-  prediction.forEach((predictions) => {
-    
-    // Drawing rectangle that'll detect the face
-    ctx.beginPath();
-    ctx.lineWidth = "4";
-    ctx.strokeStyle = "yellow";
-    ctx.rect(
-      predictions.topLeft[0],
-      predictions.topLeft[1],
-      predictions.bottomRight[0] - predictions.topLeft[0],
-      predictions.bottomRight[1] - predictions.topLeft[1]
-    );
-    // The last two arguments denotes the width and height
-    // but since the blazeface models only returns the coordinates  
-    // so we have to subtract them in order to get the width and height
-    ctx.stroke();
+  // handle events
+  // play
+  btnPlay.addEventListener("click", function () {
+    video.play();
+    btnPlay.classList.add("is-hidden");
+    btnPause.classList.remove("is-hidden");
   });
-};
 
-accessCamera();
-video.addEventListener("loadeddata", async () => {
-  model = await blazeface.load();
-  // Calling the detectFaces every 40 millisecond
-  setInterval(detectFaces, 40);
-});
+  // pause
+  btnPause.addEventListener("click", function () {
+    video.pause();
+    btnPause.classList.add("is-hidden");
+    btnPlay.classList.remove("is-hidden");
+  });
+
+  // take screenshot
+  btnScreenshot.addEventListener("click", function () {
+    const img = document.createElement("img");
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+    canvas.getContext("2d").drawImage(video, 0, 0);
+    img.src = canvas.toDataURL("image/png");
+    screenshotsContainer.prepend(img);
+  });
+
+  // switch camera
+  btnChangeCamera.addEventListener("click", function () {
+    useFrontCamera = !useFrontCamera;
+
+    initializeCamera();
+  });
+
+  // stop video stream
+  function stopVideoStream() {
+    if (videoStream) {
+      videoStream.getTracks().forEach((track) => {
+        track.stop();
+      });
+    }
+  }
+
+  // initialize
+  async function initializeCamera() {
+    stopVideoStream();
+    constraints.video.facingMode = useFrontCamera ? "user" : "environment";
+
+    try {
+      videoStream = await navigator.mediaDevices.getUserMedia(constraints);
+      video.srcObject = videoStream;
+    } catch (err) {
+      alert("Could not access the camera");
+    }
+  }
+
+  initializeCamera();
+})();
