@@ -48,13 +48,13 @@ async function main() {
 
   function detectFrame() {
     ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-    const input = tf.browser.fromPixels(canvas);
-    const preprocessed = preprocess(input);
-    const predictions = model.execute(preprocessed);
-    const boxes = predictions[0].arraySync();
-    const classes = predictions[1].arraySync();
-    const scores = predictions[2].arraySync();
-    postprocess(boxes, classes, scores);
+//     const input = tf.browser.fromPixels(canvas);
+//     const preprocessed = preprocess(input);
+//     const predictions = model.execute(preprocessed);
+//     const boxes = predictions[0].arraySync();
+//     const classes = predictions[1].arraySync();
+//     const scores = predictions[2].arraySync();
+//     postprocess(boxes, classes, scores);
     requestAnimationFrame(detectFrame);
   }
 
