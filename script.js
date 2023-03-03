@@ -31,9 +31,12 @@
     }
 
   }
+  
+  alert(classesDir);
 
   const modelPromise = load_model();
   alert('at modelPromise');
+  alert(modelPromise);
   
   // get page elements
   const video = document.querySelector("#video");
