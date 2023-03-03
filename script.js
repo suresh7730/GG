@@ -33,11 +33,26 @@
 
   }
   
-  alert(classesDir[0]);
+  alert(classesDir[1].name,classesDir[2].name);
 
   const modelPromise = load_model();
   alert('at modelPromise');
-  alert(modelPromise[0]);
+  
+    modelPromise.then(model => {
+    if (model instanceof tf.GraphModel) {
+      console.log('Model successfully loaded!');
+        alert('Model successfully loaded!');
+      // Do something with the loaded model
+    } else {
+      console.error('Failed to load model!');
+      alert('Model NOT loaded!');
+    }
+  }).catch(error => {
+    console.error('Error loading model:', error);
+      alert('Model NOT loaded!');
+  });
+
+  
   
   // get page elements
   const video = document.querySelector("#video");
