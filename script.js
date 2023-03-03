@@ -44,6 +44,10 @@
   const canvas = document.querySelector("#canvas");
   const devicesSelect = document.querySelector("#devicesSelect");
 
+  const MODEL_INPUT_HEIGHT = 224;
+  const MODEL_INPUT_WIDTH = 224;
+  const SCORE_THRESHOLD = 0.5;
+
   // video constraints
   const constraints = {
     video: {
@@ -115,6 +119,50 @@
     try {
       videoStream = await navigator.mediaDevices.getUserMedia(constraints);
       video.srcObject = videoStream;
+      
+         //const canvas = document.getElementById('canvas');
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+        const ctx = canvas.getContext('2d');
+
+        function detectFrame() {
+          ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+          const input = tf.browser.fromPixels(canvas);
+          const preprocessed = preprocess(input);
+          const predictions = model.execute(preprocessed);
+          const boxes = predictions[0].arraySync();
+          const classes = predictions[1].arraySync();
+          const scores = predictions[2].arraySync();
+          postprocess(boxes, classes, scores);
+          requestAnimationFrame(detectFrame);
+        }
+
+        function preprocess(input) {
+          //const resized = tf.image.resizeBilinear(input, [MODEL_INPUT_HEIGHT, MODEL_INPUT_WIDTH]);
+          const resized = tf.image.resizeBilinear(input, [canvas.height, canvas.width]);
+          const normalized = resized.toFloat().div(127.5).sub(1);
+          const expanded = normalized.expandDims();
+          return expanded;
+        }
+
+        function postprocess(boxes, classes, scores) {
+          for (let i = 0; i < boxes.length; i++) {
+            if (scores[i] > SCORE_THRESHOLD) {
+              const ymin = boxes[i][0] * canvas.height;
+              const xmin = boxes[i][1] * canvas.width;
+              const ymax = boxes[i][2] * canvas.height;
+              const xmax = boxes[i][3] * canvas.width;
+              const ctx = canvas.getContext('2d');
+              ctx.beginPath();
+              ctx.lineWidth = '2';
+              ctx.strokeStyle = 'red';
+              ctx.rect(xmin, ymin, xmax - xmin, ymax - ymin);
+              ctx.stroke();
+            }
+          }
+        }
+      
+      
     } catch (err) {
       alert("Could not access the camera");
     }
