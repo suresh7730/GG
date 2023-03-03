@@ -162,6 +162,8 @@
           }
         }
       
+      requestAnimationFrame(detectFrame);
+      
       
     } catch (err) {
       alert("Could not access the camera");
