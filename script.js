@@ -33,6 +33,7 @@
   }
 
   const modelPromise = load_model();
+  alert('at modelPromise');
   
   // get page elements
   const video = document.querySelector("#video");
@@ -113,12 +114,14 @@
 
   // initialize
   async function initializeCamera() {
+    alert('at initializeCamera function');
     stopVideoStream();
     constraints.video.facingMode = useFrontCamera ? "user" : "environment";
 
     try {
       videoStream = await navigator.mediaDevices.getUserMedia(constraints);
       video.srcObject = videoStream;
+      alert('videoStream at video.srcObject');
       
          //const canvas = document.getElementById('canvas');
         canvas.width = video.videoWidth;
@@ -126,6 +129,7 @@
         const ctx = canvas.getContext('2d');
 
         function detectFrame() {
+          alert('inside detectframe');
           ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
           const input = tf.browser.fromPixels(canvas);
           const preprocessed = preprocess(input);
