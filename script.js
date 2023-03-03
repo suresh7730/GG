@@ -36,8 +36,8 @@
   alert('classesDir');
   alert(classesDir[1].name);
 
-  const modelPromise = load_model();
-  alert('at modelPromise');
+  const model = load_model();
+  alert('after load_model');
   
     modelPromise.then(model => {
     if (model instanceof tf.GraphModel) {
@@ -156,7 +156,7 @@
           alert('inside detectframe3');
           const preprocessed = preprocess(input);
           alert('inside detectframe4');
-          const predictions = modelPromise.execute(preprocessed);
+          const predictions = model.execute(preprocessed);
           alert('inside detectframe5');
           alert(predictions);
           const boxes = predictions[0].arraySync();
