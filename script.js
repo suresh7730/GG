@@ -7,7 +7,7 @@
     return;
   }
 
-
+ alert('The beginning');
   const threshold = 0.75;
 
 
