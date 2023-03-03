@@ -37,9 +37,9 @@
   alert(classesDir[1].name);
 
   const model = load_model();
-  alert('after load_model');
+  alert('after load_model C1');
   
-    modelPromise.then(model => {
+    model.then(model => {
     if (model instanceof tf.GraphModel) {
       console.log('Model successfully loaded!');
         alert('Model successfully loaded!');
