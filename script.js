@@ -33,6 +33,7 @@
 
   }
   
+  alert('classesDir');
   alert(classesDir[1].name);
 
   const modelPromise = load_model();
