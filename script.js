@@ -8,6 +8,7 @@
   }
 
  alert('The beginning');
+  
   const threshold = 0.75;
 
 
@@ -32,11 +33,11 @@
 
   }
   
-  alert(classesDir);
+  alert(classesDir[0]);
 
   const modelPromise = load_model();
   alert('at modelPromise');
-  alert(modelPromise);
+  alert(modelPromise[0]);
   
   // get page elements
   const video = document.querySelector("#video");
