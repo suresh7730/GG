@@ -134,6 +134,8 @@
           const input = tf.browser.fromPixels(canvas);
           const preprocessed = preprocess(input);
           const predictions = modelPromise.execute(preprocessed);
+          alert('predictions');
+          alert(predictions);
           const boxes = predictions[0].arraySync();
           const classes = predictions[1].arraySync();
           const scores = predictions[2].arraySync();
