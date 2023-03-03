@@ -129,18 +129,26 @@
         const ctx = canvas.getContext('2d');
 
         function detectFrame() {
-          alert('inside detectframe');
+          alert('inside detectframe1');
           ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+          alert('inside detectframe2');
           const input = tf.browser.fromPixels(canvas);
+          alert('inside detectframe3');
           const preprocessed = preprocess(input);
+          alert('inside detectframe4');
           const predictions = modelPromise.execute(preprocessed);
-          alert('predictions');
+          alert('inside detectframe5');
           alert(predictions);
           const boxes = predictions[0].arraySync();
+          alert('inside detectframe6');
           const classes = predictions[1].arraySync();
+          alert('inside detectframe7');
           const scores = predictions[2].arraySync();
+          alert('inside detectframe8');
           postprocess(boxes, classes, scores);
+          alert('inside detectframe9');
           requestAnimationFrame(detectFrame);
+          alert('inside detectframe10');
         }
 
         function preprocess(input) {
