@@ -36,8 +36,8 @@
   alert('classesDir');
   alert(classesDir[1].name);
 
-//   const model = load_model();
-  const model = await loadGraphModel("https://raw.githubusercontent.com/hugozanini/TFJS-object-detection/master/models/kangaroo-detector/model.json");
+   const model = load_model();
+//   const model = await loadGraphModel("https://raw.githubusercontent.com/hugozanini/TFJS-object-detection/master/models/kangaroo-detector/model.json");
   alert('after load_model C2');
   
     model.then(model => {
